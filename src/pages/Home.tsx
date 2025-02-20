@@ -3,7 +3,7 @@ import TaskBoard from "../components/TaskBoard";
 
 const Home = () => {
 	return (
-		<main className='flex-1 p-2 overflow-hidden flex flex-col'>
+		<main className='flex-1 overflow-hidden flex flex-col'>
 			<Header />
 			<div className='flex-1 overflow-hidden'>
 				<TaskBoard />

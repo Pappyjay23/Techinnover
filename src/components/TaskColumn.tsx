@@ -19,7 +19,7 @@ interface TaskColumnProps {
 
 const TaskColumn = ({ title, count, tasks }: TaskColumnProps) => {
   return (
-    <div className="bg-[#F5F7F9] shadow-sm rounded-lg p-4 flex flex-col overflow-scroll h-fit max-h-full">
+    <div className="bg-[#F5F7F9] shadow-sm rounded-lg p-4 flex flex-col overflow-scroll h-fit max-h-full min-w-full">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-2">
           <h3 className="font-medium text-[#6F6F6F]">{title}</h3>

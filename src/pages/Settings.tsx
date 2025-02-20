@@ -2,14 +2,14 @@ import { IoSettingsSharp } from "react-icons/io5";
 
 const Settings = () => {
 	return (
-		<main className='flex-1 p-2 overflow-hidden flex items-center justify-center bg-gray-50'>
-			<div className='flex flex-col items-center justify-center w-fit bg-[#F5F3FF] rounded-lg p-10'>
+		<main className='flex-1 p-2 overflow-hidden flex items-center justify-center bg-[#F5F3FF] md:bg-gray-50'>
+			<div className='flex flex-col items-center justify-center w-fit md:bg-[#F5F3FF] rounded-lg p-4 md:p-10'>
 				<IoSettingsSharp className='text-[#4F35F3] text-4xl lg:text-5xl mb-4' />
 				<h1 className='text-3xl font-bold text-black mb-2'>Settings</h1>
-				<p className='text-xl text-gray-700 mb-8 text-center'>
+				<p className='text-lg md:text-xl text-gray-700 mb-8 text-center'>
 					Customize your experience and preferences.
 				</p>
-				<div className='bg-white p-8 rounded-lg shadow-lg max-w-md w-full'>
+				<div className='bg-white p-4 md:p-8 rounded-lg shadow-lg max-w-md w-full'>
 					<p className='text-black text-center'>
 						The settings feature is under development. Soon, you'll be able to
 						update your profile, notifications, and preferences.
