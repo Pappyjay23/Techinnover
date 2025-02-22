@@ -6,18 +6,13 @@ import {
 	IoTimeOutline,
 	IoTrashOutline,
 } from "react-icons/io5";
+import { Task, TaskContextUse } from "../context/TaskContext";
 
 interface TaskFormProps {
-	initialData?: {
-		title: string;
-		description: string;
-		priority: string;
-		image?: string;
-		date: string;
-		time: string;
-	};
-	onSubmit: (data: any) => void;
+	initialData?: Task;
+	onSubmit: () => void;
 	buttonText: string;
+	status: Task["status"];
 }
 
 interface FileInfo {
@@ -47,15 +42,22 @@ const priorities = [
 	},
 ];
 
-const TaskForm = ({ initialData, onSubmit, buttonText }: TaskFormProps) => {
+const TaskForm = ({
+	initialData,
+	onSubmit,
+	buttonText,
+	status,
+}: TaskFormProps) => {
 	const [formData, setFormData] = useState({
 		title: initialData?.title || "",
 		description: initialData?.description || "",
 		priority: initialData?.priority || "",
 		image: initialData?.image || "",
-		date: initialData?.date || "",
+		deadline: initialData?.deadline || "",
 		time: initialData?.time || "",
+		status: initialData?.status || status,
 	});
+	const { addTask, updateTask } = TaskContextUse();
 
 	const [showDropdown, setShowDropdown] = useState(false);
 	const [fileInfo, setFileInfo] = useState<FileInfo | null>(
@@ -124,8 +126,12 @@ const TaskForm = ({ initialData, onSubmit, buttonText }: TaskFormProps) => {
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
-		// onSubmit(formData);
-		console.log(formData);
+		if (initialData) {
+			updateTask({ ...formData, id: initialData.id });
+		} else {
+			addTask(formData);
+		}
+		onSubmit();
 	};
 
 	return (
@@ -265,9 +271,9 @@ const TaskForm = ({ initialData, onSubmit, buttonText }: TaskFormProps) => {
 						<input
 							type='text'
 							required
-							value={formData.date}
+							value={formData.deadline}
 							onChange={(e) =>
-								setFormData({ ...formData, date: e.target.value })
+								setFormData({ ...formData, deadline: e.target.value })
 							}
 							placeholder='Aug 26th 2024'
 							className='w-full p-2 pr-8 border border-[#D0D5DD] rounded-lg outline-none text-[95%] font-light'

@@ -2,16 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import { IoFlagSharp } from "react-icons/io5";
 import { ModalContextUse } from "../context/ModalContext";
-
-export interface Task {
-	id: number;
-	title: string;
-	priority: string;
-	description?: string;
-	image?: string;
-	date: string;
-	time: string;
-}
+import { Task, TaskContextUse } from "../context/TaskContext";
 
 interface TaskCardProps {
 	task: Task;
@@ -21,6 +12,7 @@ const TaskCard = ({ task }: TaskCardProps) => {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const menuRef = useRef<HTMLDivElement>(null);
 	const { openEditModal } = ModalContextUse();
+	const { deleteTask } = TaskContextUse();
 
 	const getPriorityColor = (priority: string) => {
 		switch (priority) {
@@ -74,7 +66,10 @@ const TaskCard = ({ task }: TaskCardProps) => {
 							</button>
 							<button
 								className='w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-50 cursor-pointer'
-								onClick={() => setIsMenuOpen(false)}>
+								onClick={() => {
+									deleteTask(task.id);
+									setIsMenuOpen(false);
+								}}>
 								Delete
 							</button>
 						</div>
@@ -84,7 +79,7 @@ const TaskCard = ({ task }: TaskCardProps) => {
 			{task.image && (
 				<div className='mb-3'>
 					<img
-						src={task.image || "/placeholder.svg"}
+						src={task.image}
 						alt={task.title}
 						className='w-full h-24 md:h-32 object-cover rounded'
 					/>
@@ -99,7 +94,7 @@ const TaskCard = ({ task }: TaskCardProps) => {
 				<div className='flex space-x-2 items-center'>
 					<IoFlagSharp className='w-4 h-4 mr-2 text-green-400' />
 					<span className='text-[70%] md:text-[85%] text-[#6E7C87]'>
-						{task.date}
+						{task.deadline}
 					</span>
 				</div>
 				<span className='text-[70%] md:text-[85%] text-[#6E7C87]'>

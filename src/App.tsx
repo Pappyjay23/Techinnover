@@ -1,13 +1,14 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import Modal from "./components/Modal";
 import Sidebar from "./components/Sidebar";
-import TaskForm from "./components/TaskForm";
-import { ModalContextUse, ModalProvider } from "./context/ModalContext";
 import Home from "./pages/Home";
+import Settings from "./pages/Settings";
 import Inbox from "./pages/Inbox";
 import Notes from "./pages/Notes";
-import Settings from "./pages/Settings";
 import TodoList from "./pages/TodoList";
+import { ModalContextUse, ModalProvider } from "./context/ModalContext";
+import { TaskProvider } from "./context/TaskContext";
+import TaskForm from "./components/TaskForm";
+import Modal from "./components/Modal";
 
 function AppContent() {
 	const {
@@ -16,6 +17,7 @@ function AppContent() {
 		isEditModalOpen,
 		closeEditModal,
 		selectedTask,
+		modalStatus,
 	} = ModalContextUse();
 
 	return (
@@ -30,18 +32,25 @@ function AppContent() {
 			</Routes>
 
 			<Modal isOpen={isAddModalOpen} onClose={closeAddModal} title='Add Task'>
-				<TaskForm onSubmit={() => {}} buttonText='Add Task' />
+				<TaskForm
+					onSubmit={closeAddModal}
+					buttonText='Add Task'
+					status={modalStatus || "TODO"}
+				/>
 			</Modal>
 
 			<Modal
 				isOpen={isEditModalOpen}
 				onClose={closeEditModal}
 				title='Edit Task'>
-				<TaskForm
-					initialData={selectedTask}
-					onSubmit={() => {}}
-					buttonText='Update'
-				/>
+				{selectedTask && (
+					<TaskForm
+						initialData={selectedTask}
+						onSubmit={closeEditModal}
+						buttonText='Update'
+						status={selectedTask.status}
+					/>
+				)}
 			</Modal>
 		</div>
 	);
@@ -50,9 +59,11 @@ function AppContent() {
 function App() {
 	return (
 		<Router>
-			<ModalProvider>
-				<AppContent />
-			</ModalProvider>
+			<TaskProvider>
+				<ModalProvider>
+					<AppContent />
+				</ModalProvider>
+			</TaskProvider>
 		</Router>
 	);
 }
