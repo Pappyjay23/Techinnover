@@ -1,7 +1,9 @@
+import { useState, useRef, useEffect } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import { IoFlagSharp } from "react-icons/io5";
+import { ModalContextUse } from "../context/ModalContext";
 
-interface Task {
+export interface Task {
 	id: number;
 	title: string;
 	priority: string;
@@ -16,6 +18,10 @@ interface TaskCardProps {
 }
 
 const TaskCard = ({ task }: TaskCardProps) => {
+	const [isMenuOpen, setIsMenuOpen] = useState(false);
+	const menuRef = useRef<HTMLDivElement>(null);
+	const { openEditModal } = ModalContextUse();
+
 	const getPriorityColor = (priority: string) => {
 		switch (priority) {
 			case "HIGH":
@@ -29,6 +35,17 @@ const TaskCard = ({ task }: TaskCardProps) => {
 		}
 	};
 
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+				setIsMenuOpen(false);
+			}
+		};
+
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => document.removeEventListener("mousedown", handleClickOutside);
+	}, []);
+
 	return (
 		<div className='bg-white rounded-lg p-4 shadow-sm cursor-pointer flex flex-col gap-4'>
 			<span
@@ -39,9 +56,30 @@ const TaskCard = ({ task }: TaskCardProps) => {
 			</span>
 			<div className='flex justify-between items-center'>
 				<h4 className='text-[80%] lg:text-base font-medium'>{task.title}</h4>
-				<button className='p-1 hover:bg-gray-100 border border-gray-200 rounded-lg cursor-pointer'>
-					<BsThreeDots className='w-4 h-4 text-gray-500' />
-				</button>
+				<div className='relative' ref={menuRef}>
+					<button
+						className='p-1 hover:bg-gray-100 border border-gray-200 rounded-lg cursor-pointer'
+						onClick={() => setIsMenuOpen(!isMenuOpen)}>
+						<BsThreeDots className='w-4 h-4 text-gray-500' />
+					</button>
+					{isMenuOpen && (
+						<div className='absolute right-[-7px] mt-2 w-24 bg-white rounded-lg shadow-lg border border-gray-200 z-10 overflow-hidden'>
+							<button
+								className='w-full text-left px-4 py-2 text-sm hover:bg-gray-50 cursor-pointer'
+								onClick={() => {
+									openEditModal(task);
+									setIsMenuOpen(false);
+								}}>
+								Edit
+							</button>
+							<button
+								className='w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-50 cursor-pointer'
+								onClick={() => setIsMenuOpen(false)}>
+								Delete
+							</button>
+						</div>
+					)}
+				</div>
 			</div>
 			{task.image && (
 				<div className='mb-3'>
@@ -58,11 +96,15 @@ const TaskCard = ({ task }: TaskCardProps) => {
 				</p>
 			)}
 			<div className='flex items-center justify-between text-sm text-gray-500'>
-				<div className="flex space-x-2 items-center">
+				<div className='flex space-x-2 items-center'>
 					<IoFlagSharp className='w-4 h-4 mr-2 text-green-400' />
-					<span className="text-[70%] md:text-[85%] text-[#6E7C87]">{task.date}</span>
+					<span className='text-[70%] md:text-[85%] text-[#6E7C87]'>
+						{task.date}
+					</span>
 				</div>
-				<span className="text-[70%] md:text-[85%] text-[#6E7C87]">{task.time}</span>
+				<span className='text-[70%] md:text-[85%] text-[#6E7C87]'>
+					{task.time}
+				</span>
 			</div>
 		</div>
 	);
