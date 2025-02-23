@@ -7,6 +7,7 @@ import { BsThreeDots } from "react-icons/bs";
 import { IoFlagSharp } from "react-icons/io5";
 import { ModalContextUse } from "../context/ModalContext";
 import { Task } from "../context/TaskContext";
+import { ThemeContextUse } from "../context/ThemeContext";
 
 interface TaskCardProps {
 	task: Task;
@@ -55,10 +56,13 @@ const TaskCard = ({ task, dragHandleProps }: TaskCardProps) => {
 		action();
 		setIsMenuOpen(false);
 	};
+	const { isLightMode } = ThemeContextUse();
 
 	return (
 		<div
-			className='bg-white rounded-lg p-4 shadow-sm flex flex-col gap-4 relative cursor-move'
+			className={`${
+				isLightMode ? "bg-white" : " bg-[#202020]"
+			} rounded-lg p-4 shadow-sm flex flex-col gap-4 relative cursor-move`}
 			{...dragHandleProps?.attributes}
 			{...dragHandleProps?.listeners}>
 			<span
@@ -68,7 +72,12 @@ const TaskCard = ({ task, dragHandleProps }: TaskCardProps) => {
 				{task.priority}
 			</span>
 			<div className='flex justify-between items-center'>
-				<h4 className='text-[80%] lg:text-base font-medium'>{task.title}</h4>
+				<h4
+					className={`text-[80%] lg:text-base font-medium  ${
+						isLightMode ? "text-black" : " text-white"
+					} `}>
+					{task.title}
+				</h4>
 				<div
 					className='relative z-10'
 					ref={menuRef}
@@ -81,7 +90,7 @@ const TaskCard = ({ task, dragHandleProps }: TaskCardProps) => {
 					{isMenuOpen && (
 						<div className='absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden'>
 							<button
-								className='w-full text-left px-4 py-2 text-sm hover:bg-gray-50 cursor-pointer'
+								className='w-full text-left px-4 py-2 text-sm hover:bg-gray-50 text-black cursor-pointer'
 								onClick={(e) =>
 									handleMenuItemClick(e, () => openEditModal(task))
 								}>
@@ -108,18 +117,31 @@ const TaskCard = ({ task, dragHandleProps }: TaskCardProps) => {
 				</div>
 			)}
 			{task.description && (
-				<p className='text-[70%] md:text-[80%] text-gray-600 mb-3'>
+				<p
+					className={`text-[70%] md:text-[80%]  ${
+						isLightMode ? "text-gray-600" : " text-white"
+					} mb-3`}>
 					{task.description}
 				</p>
 			)}
 			<div className='flex items-center justify-between text-sm text-gray-500'>
 				<div className='flex space-x-2 items-center'>
-					<IoFlagSharp className={`w-4 h-4 mr-2 ${task.status === 'COMPLETED' ? 'text-green-400' : 'text-gray-400'}`} />
-					<span className='text-[70%] md:text-[85%] text-[#6E7C87]'>
+					<IoFlagSharp
+						className={`w-4 h-4 mr-2 ${
+							task.status === "COMPLETED" ? "text-green-400" : "text-gray-400"
+						}`}
+					/>
+					<span
+						className={`text-[70%] md:text-[85%] ${
+							isLightMode ? "text-[#6E7C87]" : " text-white"
+						}`}>
 						{task.deadline}
 					</span>
 				</div>
-				<span className='text-[70%] md:text-[85%] text-[#6E7C87] lowercase'>
+				<span
+					className={`text-[70%] md:text-[85%] lowercase ${
+						isLightMode ? "text-[#6E7C87]" : " text-white"
+					}`}>
 					{task.time}
 				</span>
 			</div>

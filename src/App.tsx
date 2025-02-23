@@ -10,8 +10,9 @@ import { TaskProvider } from "./context/TaskContext";
 import TaskForm from "./components/TaskForm";
 import Modal from "./components/Modal";
 import DeleteConfirmationModal from "./components/DeleteConfirmationModal";
-import { ToastContainer } from "react-toastify"
-import "react-toastify/dist/ReactToastify.css"
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { ThemeContextUse, ThemeProvider } from "./context/ThemeContext";
 
 function AppContent() {
 	const {
@@ -24,8 +25,13 @@ function AppContent() {
 		modalStatus,
 	} = ModalContextUse();
 
+	const { isLightMode } = ThemeContextUse();
+
 	return (
-		<div className='flex h-screen bg-white'>
+		<div
+			className={`flex h-screen   ${
+				isLightMode ? "bg-white" : "bg-[#1E1E1E] text-white"
+			}`}>
 			<Sidebar />
 			<Routes>
 				<Route path='/' element={<Home />} />
@@ -65,12 +71,14 @@ function AppContent() {
 function App() {
 	return (
 		<Router>
-			<TaskProvider>
-				<ModalProvider>
-					<AppContent />
-					<ToastContainer position="bottom-right" autoClose={3000} />
-				</ModalProvider>
-			</TaskProvider>
+			<ThemeProvider>
+				<TaskProvider>
+					<ModalProvider>
+						<AppContent />
+						<ToastContainer position='bottom-right' autoClose={3000} />
+					</ModalProvider>
+				</TaskProvider>
+			</ThemeProvider>
 		</Router>
 	);
 }
