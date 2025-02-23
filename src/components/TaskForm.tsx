@@ -1,11 +1,7 @@
 import { useRef, useState } from "react";
-import { FaRegCalendar } from "react-icons/fa";
 import { IoIosArrowDown, IoMdCheckmark } from "react-icons/io";
-import {
-	IoCloudUploadOutline,
-	IoTimeOutline,
-	IoTrashOutline,
-} from "react-icons/io5";
+import { IoCloudUploadOutline, IoTrashOutline } from "react-icons/io5";
+import { toast } from "react-toastify";
 import { Task, TaskContextUse } from "../context/TaskContext";
 
 interface TaskFormProps {
@@ -48,15 +44,58 @@ const TaskForm = ({
 	buttonText,
 	status,
 }: TaskFormProps) => {
+	const parseFormattedDate = (formattedDate: string) => {
+		if (!formattedDate) return "";
+
+		// Check if formattedDate is already in "YYYY-MM-DD" format
+		if (/^\d{4}-\d{2}-\d{2}$/.test(formattedDate)) {
+			return formattedDate;
+		}
+
+		const dateObj = new Date(formattedDate);
+		if (isNaN(dateObj.getTime())) return "";
+
+		const year = dateObj.getFullYear();
+		const month = (dateObj.getMonth() + 1).toString().padStart(2, "0");
+		const day = dateObj.getDate().toString().padStart(2, "0");
+
+		return `${year}-${month}-${day}`;
+	};
+
+	const parseFormattedTime = (formattedTime: string) => {
+		if (!formattedTime) return "";
+
+		// If time is already in "HH:mm" format, return it directly
+		if (/^\d{2}:\d{2}$/.test(formattedTime)) {
+			return formattedTime;
+		}
+
+		const match = formattedTime.match(/(\d+):(\d+)(AM|PM)/);
+		if (!match) return "";
+
+		let hours = parseInt(match[1]);
+		const minutes = match[2];
+		const period = match[3];
+
+		if (period === "PM" && hours !== 12) {
+			hours += 12;
+		} else if (period === "AM" && hours === 12) {
+			hours = 0;
+		}
+
+		return `${hours.toString().padStart(2, "0")}:${minutes}`;
+	};
+
 	const [formData, setFormData] = useState({
 		title: initialData?.title || "",
 		description: initialData?.description || "",
 		priority: initialData?.priority || "",
 		image: initialData?.image || "",
-		deadline: initialData?.deadline || "",
-		time: initialData?.time || "",
+		deadline: parseFormattedDate(initialData?.deadline || ""),
+		time: parseFormattedTime(initialData?.time || ""),
 		status: initialData?.status || status,
 	});
+	const [errors, setErrors] = useState<{ [key: string]: string }>({});
 	const { addTask, updateTask } = TaskContextUse();
 
 	const [showDropdown, setShowDropdown] = useState(false);
@@ -124,14 +163,68 @@ const TaskForm = ({
 		return `${size} KB`;
 	};
 
+	const validateForm = () => {
+		const newErrors: { [key: string]: string } = {};
+		if (!formData.title.trim()) {
+			newErrors.title = "Title is required";
+		}
+		if (!formData.priority) {
+			newErrors.priority = "Priority is required";
+		}
+		if (!formData.deadline) {
+			newErrors.deadline = "Deadline is required";
+		} else {
+			const deadlineDate = new Date(formData.deadline);
+			if (isNaN(deadlineDate.getTime()) || deadlineDate < new Date()) {
+				newErrors.deadline = "Please enter a valid future date";
+			}
+		}
+		if (!formData.time) {
+			newErrors.time = "Time is required";
+		}
+		setErrors(newErrors);
+		return Object.keys(newErrors).length === 0;
+	};
+
+	const formatDate = (dateString: string) => {
+		const date = new Date(dateString);
+		return new Intl.DateTimeFormat("en-US", {
+			month: "long",
+			day: "numeric",
+			year: "numeric",
+		}).format(date);
+	};
+
+	const formatTime = (timeString: string) => {
+		const [hours, minutes] = timeString.split(":").map(Number);
+		const period = hours >= 12 ? "PM" : "AM";
+		const formattedHours = hours % 12 || 12; // Convert 0 to 12 for 12 AM
+		return `${formattedHours}:${minutes.toString().padStart(2, "0")}${period}`;
+	};
+
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
-		if (initialData) {
-			updateTask({ ...formData, id: initialData.id });
+		const formattedDeadline = formData.deadline
+			? formatDate(formData.deadline)
+			: "";
+		const formattedTime = formData.time ? formatTime(formData.time) : "";
+
+		const updatedFormData = {
+			...formData,
+			deadline: formattedDeadline,
+			time: formattedTime,
+		};
+
+		if (validateForm()) {
+			if (initialData) {
+				updateTask({ ...updatedFormData, id: initialData.id });
+			} else {
+				addTask(updatedFormData);
+			}
+			onSubmit();
 		} else {
-			addTask(formData);
+			toast.error("Please fill in all required fields correctly.");
 		}
-		onSubmit();
 	};
 
 	return (
@@ -141,11 +234,15 @@ const TaskForm = ({
 				<input
 					type='text'
 					value={formData.title}
-					required
 					onChange={(e) => setFormData({ ...formData, title: e.target.value })}
 					placeholder='Enter task name'
-					className='w-full p-2 border border-[#D0D5DD] font-light rounded-lg text-[95%] outline-none'
+					className={`w-full p-2 border ${
+						errors.title ? "border-red-500" : "border-[#D0D5DD]"
+					}  font-light rounded-lg text-[95%] outline-none`}
 				/>
+				{errors.title && (
+					<p className='text-red-500 text-xs mt-1'>{errors.title}</p>
+				)}
 			</div>
 
 			<div>
@@ -170,7 +267,9 @@ const TaskForm = ({
 					<button
 						type='button'
 						onClick={() => setShowDropdown(!showDropdown)}
-						className='w-full p-3 border border-[#D0D5DD] rounded-lg outline-none relative flex items-center justify-between'>
+						className={`w-full p-3 border ${
+							errors.priority ? "border-red-500" : "border-[#D0D5DD]"
+						} rounded-lg outline-none relative flex items-center justify-between`}>
 						<span
 							className={`p-2 rounded-sm text-xs font-normal ${
 								priorities.find((p) => p.value === formData.priority)?.color ||
@@ -198,6 +297,9 @@ const TaskForm = ({
 						</div>
 					)}
 				</div>
+				{errors.priority && (
+					<p className='text-red-500 text-xs mt-1'>{errors.priority}</p>
+				)}
 			</div>
 
 			<div>
@@ -269,33 +371,37 @@ const TaskForm = ({
 					<label className='block mb-1 text-[85%] font-medium'>Deadline</label>
 					<div className='relative'>
 						<input
-							type='text'
-							required
+							type='date'
 							value={formData.deadline}
 							onChange={(e) =>
 								setFormData({ ...formData, deadline: e.target.value })
 							}
-							placeholder='Aug 26th 2024'
-							className='w-full p-2 pr-8 border border-[#D0D5DD] rounded-lg outline-none text-[95%] font-light'
+							className={`w-full p-2 border ${
+								errors.deadline ? "border-red-500" : "border-[#D0D5DD]"
+							} rounded-lg outline-none text-[95%] font-light`}
 						/>
-						<FaRegCalendar className='absolute right-2 top-1/2 transform -translate-y-1/2 text-[#1A1919]' />
 					</div>
+					{errors.deadline && (
+						<p className='text-red-500 text-xs mt-1'>{errors.deadline}</p>
+					)}
 				</div>
 				<div>
 					<label className='block mb-1 text-[85%] font-medium'>Time</label>
 					<div className='relative'>
 						<input
-							type='text'
-							required
+							type='time'
 							value={formData.time}
 							onChange={(e) =>
 								setFormData({ ...formData, time: e.target.value })
 							}
-							placeholder='2:00 pm'
-							className='w-full p-2 pr-8 border border-[#D0D5DD] rounded-lg outline-none text-[95%] font-light'
+							className={`w-full p-2 border ${
+								errors.time ? "border-red-500" : "border-[#D0D5DD]"
+							} rounded-lg outline-none text-[95%] font-light`}
 						/>
-						<IoTimeOutline className='absolute right-2 top-1/2 transform -translate-y-1/2 text-[#1A1919]' />
 					</div>
+					{errors.time && (
+						<p className='text-red-500 text-xs mt-1'>{errors.time}</p>
+					)}
 				</div>
 			</div>
 

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { toast } from "react-toastify"
 
 export interface Task {
 	id: string;
@@ -31,8 +32,8 @@ const defaultTasks: Task[] = [
 		priority: "HIGH",
 		image:
 			"https://plus.unsplash.com/premium_photo-1684331678124-ff62c82cef7a?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-		deadline: "Aug 26th 2024",
-		time: "2:00pm",
+		deadline: "Aug 26, 2024",
+		time: "2:00PM",
 		status: "TODO",
 	},
 	{
@@ -41,8 +42,8 @@ const defaultTasks: Task[] = [
 		description:
 			"Plan and execute a home renovation project focusing on the kitchen and living room.",
 		priority: "MEDIUM",
-		deadline: "Aug 26th 2024",
-		time: "2:00pm",
+		deadline: "Aug 26, 2024",
+		time: "2:00PM",
 		status: "TODO",
 	},
 	{
@@ -51,8 +52,8 @@ const defaultTasks: Task[] = [
 		description:
 			"Plan and coordinate a local charity event to raise funds for the community center.",
 		priority: "HIGH",
-		deadline: "Aug 26th 2024",
-		time: "2:00pm",
+		deadline: "Aug 26, 2024",
+		time: "2:00PM",
 		status: "TODO",
 	},
 	{
@@ -61,8 +62,8 @@ const defaultTasks: Task[] = [
 		description:
 			"Complete an online course on advanced React patterns and hooks.",
 		priority: "LOW",
-		deadline: "Aug 26th 2024",
-		time: "2:00pm",
+		deadline: "Aug 26, 2024",
+		time: "2:00PM",
 		status: "IN_PROGRESS",
 	},
 	{
@@ -73,8 +74,8 @@ const defaultTasks: Task[] = [
 		priority: "MEDIUM",
 		image:
 			"https://plus.unsplash.com/premium_photo-1684331678124-ff62c82cef7a?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-		deadline: "Aug 26th 2024",
-		time: "2:00pm",
+		deadline: "Aug 26, 2024",
+		time: "2:00PM",
 		status: "IN_PROGRESS",
 	},
 	{
@@ -85,8 +86,8 @@ const defaultTasks: Task[] = [
 		priority: "MEDIUM",
 		image:
 			"https://plus.unsplash.com/premium_photo-1684331678124-ff62c82cef7a?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-		deadline: "Aug 26th 2024",
-		time: "2:00pm",
+		deadline: "Aug 26, 2024",
+		time: "2:00PM",
 		status: "COMPLETED",
 	},
 	{
@@ -95,8 +96,8 @@ const defaultTasks: Task[] = [
 		description:
 			"As a team license owner, I want to use multiplied limits to enhance card readability in our project management tool.",
 		priority: "LOW",
-		deadline: "Aug 26th 2024",
-		time: "2:00pm",
+		deadline: "Aug 26, 2024",
+		time: "2:00PM",
 		status: "COMPLETED",
 	},
 	{
@@ -105,8 +106,8 @@ const defaultTasks: Task[] = [
 		description:
 			"Participate in the daily standup meeting and provide updates on current tasks and any blockers.",
 		priority: "HIGH",
-		deadline: "Aug 26th 2024",
-		time: "2:00pm",
+		deadline: "Aug 26, 2024",
+		time: "2:00PM",
 		status: "COMPLETED",
 	},
 ];
@@ -126,16 +127,19 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({
 	const addTask = (task: Omit<Task, "id">) => {
 		const newTask = { ...task, id: Date.now().toString() };
 		setTasks([...tasks, newTask]);
+		toast.success("Task added successfully!")	
 	};
 
 	const updateTask = (updatedTask: Task) => {
 		setTasks(
 			tasks.map((task) => (task.id === updatedTask.id ? updatedTask : task))
 		);
+		toast.success("Task updated successfully!")
 	};
 
 	const deleteTask = (id: string) => {
 		setTasks(tasks.filter((task) => task.id !== id));
+		toast.success("Task deleted successfully!")
 	};
 
 	const moveTask = (id: string, newStatus: Task["status"]) => {
@@ -144,6 +148,7 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({
 				task.id === id ? { ...task, status: newStatus } : task
 			)
 		);
+		// toast.info("Task moved successfully!")
 	};
 
 	const reorderTasks = (newTasks: Task[]) => {

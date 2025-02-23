@@ -119,7 +119,7 @@ const TaskCard = ({ task, dragHandleProps }: TaskCardProps) => {
 						{task.deadline}
 					</span>
 				</div>
-				<span className='text-[70%] md:text-[85%] text-[#6E7C87]'>
+				<span className='text-[70%] md:text-[85%] text-[#6E7C87] lowercase'>
 					{task.time}
 				</span>
 			</div>

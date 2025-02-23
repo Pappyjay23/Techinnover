@@ -16,7 +16,7 @@ const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
         className="fixed inset-0 bg-[#263238]/60 transition-opacity"
         onClick={onClose}
       />
-      <div className="relative bg-white h-[95%] md:h-fit overflow-scroll rounded-lg w-full max-w-md p-6 shadow-xl">
+      <div className="relative bg-white h-[95%] md:h-fit md:max-h-[95%] overflow-scroll rounded-lg w-full max-w-md p-6 shadow-xl">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-semibold">{title}</h2>
           <button

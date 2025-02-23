@@ -10,6 +10,8 @@ import { TaskProvider } from "./context/TaskContext";
 import TaskForm from "./components/TaskForm";
 import Modal from "./components/Modal";
 import DeleteConfirmationModal from "./components/DeleteConfirmationModal";
+import { ToastContainer } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 
 function AppContent() {
 	const {
@@ -66,6 +68,7 @@ function App() {
 			<TaskProvider>
 				<ModalProvider>
 					<AppContent />
+					<ToastContainer position="bottom-right" autoClose={3000} />
 				</ModalProvider>
 			</TaskProvider>
 		</Router>
