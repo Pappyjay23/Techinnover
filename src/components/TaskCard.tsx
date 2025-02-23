@@ -114,7 +114,7 @@ const TaskCard = ({ task, dragHandleProps }: TaskCardProps) => {
 			)}
 			<div className='flex items-center justify-between text-sm text-gray-500'>
 				<div className='flex space-x-2 items-center'>
-					<IoFlagSharp className='w-4 h-4 mr-2 text-green-400' />
+					<IoFlagSharp className={`w-4 h-4 mr-2 ${task.status === 'COMPLETED' ? 'text-green-400' : 'text-gray-400'}`} />
 					<span className='text-[70%] md:text-[85%] text-[#6E7C87]'>
 						{task.deadline}
 					</span>
