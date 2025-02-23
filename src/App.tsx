@@ -9,6 +9,7 @@ import { ModalContextUse, ModalProvider } from "./context/ModalContext";
 import { TaskProvider } from "./context/TaskContext";
 import TaskForm from "./components/TaskForm";
 import Modal from "./components/Modal";
+import DeleteConfirmationModal from "./components/DeleteConfirmationModal";
 
 function AppContent() {
 	const {
@@ -16,6 +17,7 @@ function AppContent() {
 		closeAddModal,
 		isEditModalOpen,
 		closeEditModal,
+		isDeleteModalOpen,
 		selectedTask,
 		modalStatus,
 	} = ModalContextUse();
@@ -52,6 +54,8 @@ function AppContent() {
 					/>
 				)}
 			</Modal>
+
+			{isDeleteModalOpen && <DeleteConfirmationModal />}
 		</div>
 	);
 }

@@ -1,18 +1,25 @@
-import { useState, useRef, useEffect } from "react";
+import React from "react";
+
+import { DraggableAttributes } from "@dnd-kit/core";
+import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
+import { useEffect, useRef, useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import { IoFlagSharp } from "react-icons/io5";
 import { ModalContextUse } from "../context/ModalContext";
-import { Task, TaskContextUse } from "../context/TaskContext";
+import { Task } from "../context/TaskContext";
 
 interface TaskCardProps {
 	task: Task;
+	dragHandleProps?: {
+		attributes: DraggableAttributes;
+		listeners: SyntheticListenerMap | undefined;
+	};
 }
 
-const TaskCard = ({ task }: TaskCardProps) => {
+const TaskCard = ({ task, dragHandleProps }: TaskCardProps) => {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const menuRef = useRef<HTMLDivElement>(null);
-	const { openEditModal } = ModalContextUse();
-	const { deleteTask } = TaskContextUse();
+	const { openEditModal, openDeleteModal } = ModalContextUse();
 
 	const getPriorityColor = (priority: string) => {
 		switch (priority) {
@@ -38,8 +45,22 @@ const TaskCard = ({ task }: TaskCardProps) => {
 		return () => document.removeEventListener("mousedown", handleClickOutside);
 	}, []);
 
+	const handleMenuClick = (e: React.MouseEvent) => {
+		e.stopPropagation();
+		setIsMenuOpen(!isMenuOpen);
+	};
+
+	const handleMenuItemClick = (e: React.MouseEvent, action: () => void) => {
+		e.stopPropagation();
+		action();
+		setIsMenuOpen(false);
+	};
+
 	return (
-		<div className='bg-white rounded-lg p-4 shadow-sm cursor-pointer flex flex-col gap-4'>
+		<div
+			className='bg-white rounded-lg p-4 shadow-sm flex flex-col gap-4 relative cursor-move'
+			{...dragHandleProps?.attributes}
+			{...dragHandleProps?.listeners}>
 			<span
 				className={`text-[70%] md:text-xs px-2 py-1 rounded w-fit ${getPriorityColor(
 					task.priority
@@ -48,28 +69,29 @@ const TaskCard = ({ task }: TaskCardProps) => {
 			</span>
 			<div className='flex justify-between items-center'>
 				<h4 className='text-[80%] lg:text-base font-medium'>{task.title}</h4>
-				<div className='relative' ref={menuRef}>
+				<div
+					className='relative z-10'
+					ref={menuRef}
+					onPointerDown={(e) => e.stopPropagation()}>
 					<button
 						className='p-1 hover:bg-gray-100 border border-gray-200 rounded-lg cursor-pointer'
-						onClick={() => setIsMenuOpen(!isMenuOpen)}>
+						onClick={handleMenuClick}>
 						<BsThreeDots className='w-4 h-4 text-gray-500' />
 					</button>
 					{isMenuOpen && (
-						<div className='absolute right-[-7px] mt-2 w-24 bg-white rounded-lg shadow-lg border border-gray-200 z-10 overflow-hidden'>
+						<div className='absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden'>
 							<button
 								className='w-full text-left px-4 py-2 text-sm hover:bg-gray-50 cursor-pointer'
-								onClick={() => {
-									openEditModal(task);
-									setIsMenuOpen(false);
-								}}>
+								onClick={(e) =>
+									handleMenuItemClick(e, () => openEditModal(task))
+								}>
 								Edit
 							</button>
 							<button
 								className='w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-50 cursor-pointer'
-								onClick={() => {
-									deleteTask(task.id);
-									setIsMenuOpen(false);
-								}}>
+								onClick={(e) =>
+									handleMenuItemClick(e, () => openDeleteModal(task))
+								}>
 								Delete
 							</button>
 						</div>

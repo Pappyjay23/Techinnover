@@ -4,12 +4,15 @@ import { Task } from './TaskContext';
 interface ModalContextType {
   isAddModalOpen: boolean;
   isEditModalOpen: boolean;
+  isDeleteModalOpen: boolean;
   selectedTask: Task | null;
   modalStatus: Task['status'] | null;
   openAddModal: (status: Task['status']) => void;
   closeAddModal: () => void;
   openEditModal: (task: Task) => void;
   closeEditModal: () => void;
+  openDeleteModal: (task: Task) => void;
+  closeDeleteModal: () => void;
 }
 
 const ModalContext = createContext<ModalContextType | undefined>(undefined);
@@ -17,6 +20,7 @@ const ModalContext = createContext<ModalContextType | undefined>(undefined);
 export function ModalProvider({ children }: { children: ReactNode }) {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [modalStatus, setModalStatus] = useState<Task['status'] | null>(null);
 
@@ -37,17 +41,30 @@ export function ModalProvider({ children }: { children: ReactNode }) {
     setIsEditModalOpen(false);
   };
 
+  const openDeleteModal = (task: Task) => {
+    setSelectedTask(task);
+    setIsDeleteModalOpen(true);
+  };
+
+  const closeDeleteModal = () => {
+    setSelectedTask(null);
+    setIsDeleteModalOpen(false);
+  };
+
   return (
     <ModalContext.Provider
       value={{
         isAddModalOpen,
         isEditModalOpen,
+        isDeleteModalOpen,
         selectedTask,
         modalStatus,
         openAddModal,
         closeAddModal,
         openEditModal,
         closeEditModal,
+        openDeleteModal,
+        closeDeleteModal,
       }}
     >
       {children}
