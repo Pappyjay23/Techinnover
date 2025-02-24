@@ -1,50 +1,103 @@
-# React + TypeScript + Vite
+<div align="center">
+	<h1> Techinnover - Task Management Dashboard </h1>
+</div>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview 📋
 
-Currently, two official plugins are available:
+Techinnover is a modern Task Management Dashboard designed to help users efficiently manage tasks, track progress, and stay organized. It offers a clean, user-friendly interface with essential productivity tools.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Snapshot 📸
 
-## Expanding the ESLint configuration
+![Techinnover](https://github.com/user-attachments/assets/008f622e-63a9-405a-a08e-927cfd512203)
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+### Key Features
+- Drag and drop task management
+- Status tracking (TODO, IN_PROGRESS, COMPLETED)
+- Real-time search functionality
+- Dark/Light theme support
+- Responsive design
+- Local storage persistence
+- Task details with deadlines and time tracking
 
-- Configure the top-level `parserOptions` property like this:
+### Design & Architecture
+The application follows a component-based architecture using React, with:
+- Component-based structure using TypeScript
+- Context API for state management
+- DnD-kit for drag-and-drop functionality
+- Modular components with clear separation of concerns
+- Responsive layouts using Tailwind CSS
+- Theme switching with context-based management
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+### Core Components
+- Task Columns for different status categories
+- Interactive Task Cards with priority indicators
+- Search functionality with real-time filtering
+- Theme toggle for user preference
+- Modal system for task operations (Add/Edit/Delete)
+
+
+## Tech Stack ✨
+
+- [React.js](https://reactjs.org/) - UI Library
+  - Chosen for its component-based architecture and robust ecosystem
+- [Typescript](https://www.typescriptlang.org/) - Type Safety
+  - For enhanced development experience and code reliability
+- [Tailwind CSS](https://tailwindcss.com/) - Styling and UI
+  - Provides rapid UI development with a utility-first approach
+- [@dnd-kit](https://dndkit.com/) - Drag and Drop
+  - Modern drag-and-drop library for React
+- [Vite](https://vitejs.dev/) - Build tool
+  - Offers faster development experience and optimized builds
+- [Vercel](https://vercel.com/) - Hosting and Deployment
+  - Enables seamless deployment and excellent performance
+
+## Installation & Setup 💻
+
+Follow these steps to run Techinnover on your local machine.
+
+### Prerequisites
+- Node.js (v14 or higher)
+- npm or yarn package manager
+
+### Clone this repository
+
+```bash
+git clone https://github.com/Pappyjay23/Techinnover.git
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+### Navigate to the directory
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+```bash
+cd Techinnover
 ```
+
+### Install Dependencies
+
+```bash
+npm install
+```
+
+### Run
+
+Run the development server to view the app.
+
+```bash
+npm run dev
+```
+
+Now, you can navigate to http://localhost:5173/ to view the app.
+
+### Build
+
+```bash
+npm run build
+```
+
+## Development Notes 📝
+- The app uses React Context for global state management
+- Task data persists in localStorage
+- Separate contexts for tasks, modal, and theme management
+
+## Credits ✍
+
+Implementation by [@Pappyjay23](https://github.com/Pappyjay23)
