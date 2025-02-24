@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { toast } from "react-toastify"
+import { toast } from "react-toastify";
 
 export interface Task {
 	id: string;
@@ -14,11 +14,13 @@ export interface Task {
 
 interface TaskContextType {
 	tasks: Task[];
+	filteredTasks: Task[];
 	addTask: (task: Omit<Task, "id">) => void;
 	updateTask: (task: Task) => void;
 	deleteTask: (id: string) => void;
 	moveTask: (id: string, newStatus: Task["status"]) => void;
 	reorderTasks: (task: Task[]) => void;
+	searchTasks: (searchTerm: string) => void;
 }
 
 const TaskContext = createContext<TaskContextType | undefined>(undefined);
@@ -120,26 +122,29 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({
 		return storedTasks ? JSON.parse(storedTasks) : defaultTasks;
 	});
 
+	const [filteredTasks, setFilteredTasks] = useState<Task[]>(tasks);
+
 	useEffect(() => {
 		localStorage.setItem("tasks", JSON.stringify(tasks));
+		setFilteredTasks(tasks);
 	}, [tasks]);
 
 	const addTask = (task: Omit<Task, "id">) => {
 		const newTask = { ...task, id: Date.now().toString() };
 		setTasks([...tasks, newTask]);
-		toast.success("Task added successfully!")	
+		toast.success("Task added successfully!");
 	};
 
 	const updateTask = (updatedTask: Task) => {
 		setTasks(
 			tasks.map((task) => (task.id === updatedTask.id ? updatedTask : task))
 		);
-		toast.success("Task updated successfully!")
+		toast.success("Task updated successfully!");
 	};
 
 	const deleteTask = (id: string) => {
 		setTasks(tasks.filter((task) => task.id !== id));
-		toast.success("Task deleted successfully!")
+		toast.success("Task deleted successfully!");
 	};
 
 	const moveTask = (id: string, newStatus: Task["status"]) => {
@@ -151,6 +156,20 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({
 		// toast.info("Task moved successfully!")
 	};
 
+	const searchTasks = (searchTerm: string) => {
+		if (!searchTerm.trim()) {
+			setFilteredTasks(tasks);
+			return;
+		}
+
+		const filtered = tasks.filter(
+			(task) =>
+				task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+				task.description.toLowerCase().includes(searchTerm.toLowerCase())
+		);
+		setFilteredTasks(filtered);
+	};
+
 	const reorderTasks = (newTasks: Task[]) => {
 		setTasks(newTasks);
 	};
@@ -159,11 +178,13 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({
 		<TaskContext.Provider
 			value={{
 				tasks,
+				filteredTasks,
 				addTask,
 				updateTask,
 				deleteTask,
 				moveTask,
 				reorderTasks,
+				searchTasks,
 			}}>
 			{children}
 		</TaskContext.Provider>

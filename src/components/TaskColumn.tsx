@@ -15,11 +15,11 @@ interface TaskColumnProps {
 }
 
 const TaskColumn = ({ title, status }: TaskColumnProps) => {
-	const { tasks } = TaskContextUse();
+	const { filteredTasks } = TaskContextUse();
 	const { openAddModal } = ModalContextUse();
 	const { setNodeRef } = useDroppable({ id: `column-${status}` });
 
-	const columnTasks = tasks.filter((task) => task.status === status);
+	const columnTasks = filteredTasks.filter((task) => task.status === status);
 	const { isLightMode } = ThemeContextUse();
 
 	return (

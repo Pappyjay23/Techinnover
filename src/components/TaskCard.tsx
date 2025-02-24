@@ -132,14 +132,14 @@ const TaskCard = ({ task, dragHandleProps }: TaskCardProps) => {
 						}`}
 					/>
 					<span
-						className={`text-[70%] md:text-[85%] ${
+						className={`text-[70%] lg:text-[85%] ${
 							isLightMode ? "text-[#6E7C87]" : " text-white"
 						}`}>
 						{task.deadline}
 					</span>
 				</div>
 				<span
-					className={`text-[70%] md:text-[85%] lowercase ${
+					className={`text-[70%] lg:text-[85%] lowercase ${
 						isLightMode ? "text-[#6E7C87]" : " text-white"
 					}`}>
 					{task.time}
