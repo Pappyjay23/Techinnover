@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { BsSearch } from "react-icons/bs";
-import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { TaskContextUse } from "../context/TaskContext";
 import { ThemeContextUse } from "../context/ThemeContext";
 import DarkModeToggle from "./DarkModeToggle";
@@ -16,11 +15,19 @@ const Header = () => {
 		searchTasks(newSearchTerm);
 	};
 
+	const date = new Intl.DateTimeFormat("en-us", {
+		month: "long",
+		day: "numeric",
+		year: "numeric",
+	}).format(new Date());
+
 	return (
 		<header className='border-0 border-gray-200 p-6 flex flex-col md:flex-row gap-3 justify-between items-center'>
 			<div className='flex  items-center space-x-4'>
-				<h2 className='text-md md:text-2xl font-semibold'>2 August 2023</h2>
-				<div className='flex space-x-2 items-center'>
+				<h2 className='text-md md:text-2xl font-semibold'>
+					{date}
+				</h2>
+				{/* <div className='flex space-x-2 items-center'>
 					<button
 						className={`p-2 flex items-center justify-center hover:bg-gray-100  ${
 							isLightMode ? "text-black" : "hover:text-black"
@@ -33,7 +40,7 @@ const Header = () => {
 						} border border-gray-200 rounded-full cursor-pointer transition-all duration-300 ease-in-out`}>
 						<FaArrowRight className='w-3 h-3' />
 					</button>
-				</div>
+				</div> */}
 			</div>
 			<div className='flex items-center space-x-4'>
 				<div className='relative'>
